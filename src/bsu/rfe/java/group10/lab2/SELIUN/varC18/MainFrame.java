@@ -15,6 +15,10 @@ public class MainFrame extends JFrame{
     private static final int WIDTH = 500;
     private static final int HEIGHT = 420;
 
+    private Double mem1 = 0.0;
+    private Double mem2 = 0.0;
+    private Double mem3 = 0.0;
+
     private JTextField textFieldX; //Добавили текстовые поля для ввода значений переменных
     private JTextField textFieldY;
     private JTextField textFieldZ;
@@ -123,6 +127,33 @@ public class MainFrame extends JFrame{
         hboxVariables.add(textFieldZ);
 
         hboxVariables.add(Box.createHorizontalGlue());
+
+
+        JButton mc = new JButton("MC");
+        mc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mem1 = 0.0;
+                mem2 = 0.0;
+                mem3 = 0.0;
+            }
+        });
+        JButton mPlus = new JButton("M+");
+        mPlus.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mem1 += Double.parseDouble(textFieldResult.getText());
+                textFieldResult.setText(mem1.toString());
+            }
+        });
+        Box mButtons = Box.createHorizontalBox();
+        mButtons.add(Box.createHorizontalGlue());
+        mButtons.add(mc);
+        mButtons.add(Box.createHorizontalStrut(10));
+        mButtons.add(mPlus);
+        mButtons.add(Box.createHorizontalGlue());
+        mButtons.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
 // Создать область для вывода результата
         JLabel labelForResult = new JLabel("Результат:");
 //labelResult = new JLabel("0");
@@ -137,6 +168,7 @@ public class MainFrame extends JFrame{
         hboxResult.add(textFieldResult);
         hboxResult.add(Box.createHorizontalGlue());
         hboxResult.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+
 // Создать область для кнопок
         JButton buttonCalc = new JButton("Вычислить");
         buttonCalc.addActionListener(new ActionListener() {
@@ -184,6 +216,7 @@ public class MainFrame extends JFrame{
         contentBox.add(hboxVariables);
         contentBox.add(hboxResult);
         contentBox.add(hboxButtons);
+        contentBox.add(mButtons);
         contentBox.add(Box.createVerticalGlue());
 
         getContentPane().add(contentBox, BorderLayout.CENTER); //Помещаем нашу коробку(со всеми коробками(со всеми состовляющими)) в наш Frame
