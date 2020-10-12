@@ -1,15 +1,19 @@
 package bsu.rfe.java.group10.lab2.SELIUN.varC18;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class MainFrame extends JFrame{
 
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 320;
+    private static final int WIDTH = 500;
+    private static final int HEIGHT = 420;
 
     private JTextField textFieldX; //Добавили текстовые поля для ввода значений переменных
     private JTextField textFieldY;
@@ -17,9 +21,21 @@ public class MainFrame extends JFrame{
 
     private JTextField textFieldResult; //Текстовое поле для вывода результата вычислений формулы
 
+    private JLabel imageLabel = new JLabel();
+
     private ButtonGroup radioButtons = new ButtonGroup(); //Создали группу радио-кнопок, в которую и будем радо-кнопки добавлять
 
     private Box hboxFormulaType = Box.createHorizontalBox(); //Создаем контейнер Коробочного вида, горизонтального типа
+    //private Box imageBox = Box.createHorizontalBox(); //Создаем горизонтальную коробку для хранения картинки
+    private String[] functionsImagesPath = { "C:\\Documents\\Programming\\Java\\JavaLab_2\\src\\bsu\\rfe\\java\\group10\\lab2\\SELIUN\\varC18\\images\\1.png", "C:\\Documents\\Programming\\Java\\JavaLab_2\\src\\bsu\\rfe\\java\\group10\\lab2\\SELIUN\\varC18\\images\\2.png"};
+    BufferedImage imageFunction;
+    {
+        try {
+            imageFunction = ImageIO.read(new File(functionsImagesPath[0]));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private int formulaId = 1;
 
@@ -40,6 +56,12 @@ public class MainFrame extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainFrame.this.formulaId = formulaId;
+                try {
+                    MainFrame.this.imageFunction = ImageIO.read(new File(functionsImagesPath[formulaId - 1]));
+                    imageLabel.setIcon(new ImageIcon(imageFunction));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
                 //imagePane.updateUI(); //???
             }
         });
@@ -61,6 +83,16 @@ public class MainFrame extends JFrame{
         radioButtons.setSelected(radioButtons.getElements().nextElement().getModel(), true);
         hboxFormulaType.add(Box.createHorizontalGlue());
         hboxFormulaType.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+
+
+
+        imageLabel.setIcon(new ImageIcon(imageFunction));
+        Box imageBox = Box.createHorizontalBox();
+        imageBox.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+        imageBox.add(Box.createHorizontalGlue());
+        imageBox.add(imageLabel);
+        imageBox.add(Box.createHorizontalGlue());
+
 // Создать область с полями ввода для X и Y
         JLabel labelForX = new JLabel("X:");
         textFieldX = new JTextField("0", 10);
@@ -148,6 +180,7 @@ public class MainFrame extends JFrame{
         Box contentBox = Box.createVerticalBox(); //Создаем отдельный коробочный компановщик, и в него закидываем наши состовляющие, созданные до этого
         contentBox.add(Box.createVerticalGlue());
         contentBox.add(hboxFormulaType);
+        contentBox.add(imageBox);
         contentBox.add(hboxVariables);
         contentBox.add(hboxResult);
         contentBox.add(hboxButtons);
