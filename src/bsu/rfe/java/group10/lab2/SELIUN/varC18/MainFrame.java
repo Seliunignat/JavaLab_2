@@ -15,9 +15,12 @@ public class MainFrame extends JFrame{
     private static final int WIDTH = 500;
     private static final int HEIGHT = 420;
 
+    private Double[] mem = {0.0, 0.0, 0.0};
+    /*
     private Double mem1 = 0.0;
     private Double mem2 = 0.0;
     private Double mem3 = 0.0;
+    */
 
     private JTextField textFieldX; //Добавили текстовые поля для ввода значений переменных
     private JTextField textFieldY;
@@ -28,11 +31,14 @@ public class MainFrame extends JFrame{
     private JLabel imageLabel = new JLabel();
 
     private ButtonGroup radioButtons = new ButtonGroup(); //Создали группу радио-кнопок, в которую и будем радо-кнопки добавлять
+    private ButtonGroup memoryButtons = new ButtonGroup(); //Создали группа радио-кнопок для переключения действующей ячейки памяти М, в которую и будем радио-кнопки добавлять
 
     private Box hboxFormulaType = Box.createHorizontalBox(); //Создаем контейнер Коробочного вида, горизонтального типа
+    private Box hboxMemoryType = Box.createHorizontalBox(); //Создаем контейнер Коробочного вида, горизонтального типа
     //private Box imageBox = Box.createHorizontalBox(); //Создаем горизонтальную коробку для хранения картинки
     private String[] functionsImagesPath = { "C:\\Documents\\Programming\\Java\\JavaLab_2\\src\\bsu\\rfe\\java\\group10\\lab2\\SELIUN\\varC18\\images\\1.png", "C:\\Documents\\Programming\\Java\\JavaLab_2\\src\\bsu\\rfe\\java\\group10\\lab2\\SELIUN\\varC18\\images\\2.png"};
     BufferedImage imageFunction;
+
     {
         try {
             imageFunction = ImageIO.read(new File(functionsImagesPath[0]));
@@ -41,7 +47,9 @@ public class MainFrame extends JFrame{
         }
     }
 
+
     private int formulaId = 1;
+    private static int memoryId = 1; //Делаем чтатической, чтобы понимать, какая переменная сейчас активна
 
     public Double calculate1(Double x, Double y, Double z)
     {
@@ -73,6 +81,19 @@ public class MainFrame extends JFrame{
         hboxFormulaType.add(button);
     }
 
+    private void addMemoryRadioButton(String buttonName, final int memoryId)
+    {
+        JRadioButton button = new JRadioButton(buttonName);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.memoryId = memoryId;
+            }
+        });
+        memoryButtons.add(button); //Добавляем в группу кнопок
+        hboxMemoryType.add(button); //Добавляем в коробочный контейнер
+    }
+
     public MainFrame()
     {
         super("Вычисление формулы");
@@ -81,6 +102,7 @@ public class MainFrame extends JFrame{
 // Отцентрировать окно приложения на экране
         setLocation((kit.getScreenSize().width - WIDTH)/2,
                 (kit.getScreenSize().height - HEIGHT)/2);
+
         hboxFormulaType.add(Box.createHorizontalGlue());
         addRadioButton("Формула 1", 1);
         addRadioButton("Формула 2", 2);
@@ -125,27 +147,34 @@ public class MainFrame extends JFrame{
         hboxVariables.add(labelForZ);
         hboxVariables.add(Box.createHorizontalStrut(10));
         hboxVariables.add(textFieldZ);
-
         hboxVariables.add(Box.createHorizontalGlue());
 
+        //Создаем контейнер с радио-кнопками, позволяющие выбирать ячейки памяти
+        hboxMemoryType.add(Box.createHorizontalGlue());
+        addMemoryRadioButton("Переменная 1", 1);
+        addMemoryRadioButton("Переменная 2", 2);
+        addMemoryRadioButton("Переменная 3", 3);
+        memoryButtons.setSelected(memoryButtons.getElements().nextElement().getModel(), true);
+        hboxMemoryType.add(Box.createHorizontalGlue());
+        hboxMemoryType.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 
+        //Создаем кнопки, для работы с ячейками памяти
         JButton mc = new JButton("MC");
         mc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                mem1 = 0.0;
-                mem2 = 0.0;
-                mem3 = 0.0;
+                mem[memoryId-1] = 0.0;
             }
         });
         JButton mPlus = new JButton("M+");
         mPlus.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                mem1 += Double.parseDouble(textFieldResult.getText());
-                textFieldResult.setText(mem1.toString());
+                mem[memoryId-1] += Double.parseDouble(textFieldResult.getText());
+                textFieldResult.setText(mem[memoryId-1].toString());
             }
         });
+        //Создаем контейнер, для работы с ячейками памяти
         Box mButtons = Box.createHorizontalBox();
         mButtons.add(Box.createHorizontalGlue());
         mButtons.add(mc);
@@ -160,7 +189,7 @@ public class MainFrame extends JFrame{
         textFieldResult = new JTextField("0", 15);
         textFieldResult.setMaximumSize(textFieldResult.getPreferredSize());
         textFieldResult.setEditable(false);
-
+        //Создаем контейнер в котором будет отображаться результат
         Box hboxResult = Box.createHorizontalBox();
         hboxResult.add(Box.createHorizontalGlue());
         hboxResult.add(labelForResult);
@@ -199,7 +228,7 @@ public class MainFrame extends JFrame{
                 textFieldResult.setText("0");
             }
         });
-
+        //Контейнер для кнопок
         Box hboxButtons = Box.createHorizontalBox();
         hboxButtons.add(Box.createHorizontalGlue());
         hboxButtons.add(buttonCalc);
@@ -208,7 +237,7 @@ public class MainFrame extends JFrame{
         hboxButtons.add(Box.createHorizontalGlue());
         hboxButtons.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 
-// Связать области воедино в компоновке BoxLayout
+    // Связать области воедино в компоновке BoxLayout
         Box contentBox = Box.createVerticalBox(); //Создаем отдельный коробочный компановщик, и в него закидываем наши состовляющие, созданные до этого
         contentBox.add(Box.createVerticalGlue());
         contentBox.add(hboxFormulaType);
@@ -216,6 +245,7 @@ public class MainFrame extends JFrame{
         contentBox.add(hboxVariables);
         contentBox.add(hboxResult);
         contentBox.add(hboxButtons);
+        contentBox.add(hboxMemoryType);
         contentBox.add(mButtons);
         contentBox.add(Box.createVerticalGlue());
 
