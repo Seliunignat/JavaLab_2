@@ -12,8 +12,8 @@ import java.io.IOException;
 
 public class MainFrame extends JFrame{
 
-    private static final int WIDTH = 500;
-    private static final int HEIGHT = 420;
+    private static final int WIDTH = 700;
+    private static final int HEIGHT = 470;
 
     private Double[] mem = {0.0, 0.0, 0.0};
     /*
@@ -27,6 +27,8 @@ public class MainFrame extends JFrame{
     private JTextField textFieldZ;
 
     private JTextField textFieldResult; //Текстовое поле для вывода результата вычислений формулы
+
+    private JTextField[] memTextField = new JTextField[3];
 
     private JLabel imageLabel = new JLabel();
 
@@ -94,14 +96,13 @@ public class MainFrame extends JFrame{
         hboxMemoryType.add(button); //Добавляем в коробочный контейнер
     }
 
-    public MainFrame()
-    {
+    public MainFrame() {
         super("Вычисление формулы");
         setSize(WIDTH, HEIGHT);
         Toolkit kit = Toolkit.getDefaultToolkit();
 // Отцентрировать окно приложения на экране
-        setLocation((kit.getScreenSize().width - WIDTH)/2,
-                (kit.getScreenSize().height - HEIGHT)/2);
+        setLocation((kit.getScreenSize().width - WIDTH) / 2,
+                (kit.getScreenSize().height - HEIGHT) / 2);
 
         hboxFormulaType.add(Box.createHorizontalGlue());
         addRadioButton("Формула 1", 1);
@@ -109,7 +110,6 @@ public class MainFrame extends JFrame{
         radioButtons.setSelected(radioButtons.getElements().nextElement().getModel(), true);
         hboxFormulaType.add(Box.createHorizontalGlue());
         hboxFormulaType.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
-
 
 
         imageLabel.setIcon(new ImageIcon(imageFunction));
@@ -158,12 +158,48 @@ public class MainFrame extends JFrame{
         hboxMemoryType.add(Box.createHorizontalGlue());
         hboxMemoryType.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
 
+        //Создаем нужные лэйблы и текстовые поля для вывода значений текущих переменных
+        JLabel mem1Label = new JLabel("MEM1:");
+        memTextField[0] = new JTextField("0", 40);
+        memTextField[0].setMaximumSize(memTextField[0].getPreferredSize());
+        JLabel mem2Label = new JLabel("MEM2:");
+        memTextField[1] = new JTextField("0", 40);
+        memTextField[1].setMaximumSize(memTextField[1].getPreferredSize());
+        JLabel mem3Label = new JLabel("MEM3:");
+        memTextField[2] = new JTextField("0", 40);
+        memTextField[2].setMaximumSize(memTextField[2].getPreferredSize());
+        //Создаем коробку в которой будут выводится значения ячеек памяти
+        Box memoryValueBox = Box.createHorizontalBox();
+        memoryValueBox.setBorder(BorderFactory.createLineBorder(Color.PINK));
+
+        memoryValueBox.add(Box.createHorizontalGlue());
+        memoryValueBox.add(mem1Label);
+        memoryValueBox.add(Box.createHorizontalStrut(10));
+        memoryValueBox.add(memTextField[0]);
+        memTextField[0].setHorizontalAlignment(SwingConstants.LEFT);
+        memTextField[0].setEditable(false);
+
+        memoryValueBox.add(Box.createHorizontalStrut(15));
+        memoryValueBox.add(mem2Label);
+        memoryValueBox.add(Box.createHorizontalStrut(10));
+        memoryValueBox.add(memTextField[1]);
+        memTextField[1].setEditable(false);
+
+        memoryValueBox.add(Box.createHorizontalStrut(15));
+        memoryValueBox.add(mem3Label);
+        memoryValueBox.add(Box.createHorizontalStrut(10));
+        memoryValueBox.add(memTextField[2]);
+        memTextField[2].setEditable(false);
+        memoryValueBox.add(Box.createHorizontalGlue());
+
+
         //Создаем кнопки, для работы с ячейками памяти
         JButton mc = new JButton("MC");
         mc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 mem[memoryId-1] = 0.0;
+                memTextField[memoryId-1].setText(mem[memoryId-1].toString());
             }
         });
         JButton mPlus = new JButton("M+");
@@ -172,6 +208,7 @@ public class MainFrame extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 mem[memoryId-1] += Double.parseDouble(textFieldResult.getText());
                 textFieldResult.setText(mem[memoryId-1].toString());
+                memTextField[memoryId-1].setText(mem[memoryId-1].toString());
             }
         });
         //Создаем контейнер, для работы с ячейками памяти
@@ -246,6 +283,7 @@ public class MainFrame extends JFrame{
         contentBox.add(hboxResult);
         contentBox.add(hboxButtons);
         contentBox.add(hboxMemoryType);
+        contentBox.add(memoryValueBox);
         contentBox.add(mButtons);
         contentBox.add(Box.createVerticalGlue());
 
